@@ -4,7 +4,7 @@ import urllib.parse
 #INPUT: 
 copy_path_from = ["user","test"] #["space","folder"]
 copy_path_to = ["user","test1"] #["space","folder"]
-delete_old_vds=False # in case you would like to keep and onyl copy VDSs in new Folder set to False
+delete_old_vds=True # in case you would like to keep and onyl copy VDSs in new Folder set to False
 
 dremio_url = 'http://localhost:9047' # url dremio
 user="user" # user name in dremio
@@ -92,9 +92,11 @@ if __name__ == "__main__":
         object_response=get_all_vdss_from_folder()
         for vds in object_response["children"]:
             vds=get_vds(vds["id"])
-            move_vds(vds)
-            if (delete_old_vds):
-                print("delete")
-                delete_vds(vds)
+            if(vds["entityType"]=="dataset"):
+                if(vds["type"]=="VIRTUAL_DATASET"):
+                    move_vds(vds)
+                    if (delete_old_vds):
+                        print("delete")
+                        delete_vds(vds)
 
             
