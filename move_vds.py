@@ -4,9 +4,10 @@ import urllib.parse
 #INPUT: 
 copy_path_from = ["user","test"] #["space","folder"]
 copy_path_to = ["user","test1"] #["space","folder"]
+delete_old_vds=False # in case you would like to keep and onyl copy VDSs in new Folder set to False
 
 dremio_url = 'http://localhost:9047' # url dremio
-user="usr" # user name in dremio
+user="user" # user name in dremio
 pwd="pwd" # password ame in dremio
 verify_ssl=False # SSL enanled/disabled for REST calls
 
@@ -57,7 +58,6 @@ def move_vds(vds):
     
     for name in vds["path"]:
         tmp_name=name
-    print(copy_path_to)
     tmp_copy_to = copy_path_to.copy()
     tmp_copy_to.append(name)
     vds_new = {
@@ -71,10 +71,17 @@ def move_vds(vds):
     try:
         response = requests.post(dremio_url + '/api/v3/catalog', headers=headers,  data=vds_new ,verify=verify_ssl)
         return(response.json())
+
+        
     except requests.exceptions.SSLError as e:
         return({"response":"SSLError"})
 
-
+def delete_vds(vds):
+    headers = {'Content-Type': content_type, 'Authorization': token}
+    try:
+        response = requests.delete(dremio_url + '/api/v3/catalog/'+vds["id"], headers=headers,  verify=verify_ssl)
+    except requests.exceptions.SSLError as e:
+        return({"response":"SSLError"})
 
 
 if __name__ == "__main__":
@@ -86,3 +93,8 @@ if __name__ == "__main__":
         for vds in object_response["children"]:
             vds=get_vds(vds["id"])
             move_vds(vds)
+            if (delete_old_vds):
+                print("delete")
+                delete_vds(vds)
+
+            
