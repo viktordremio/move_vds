@@ -57,7 +57,7 @@ def move_vds(vds):
     
     for name in vds["path"]:
         tmp_name=name
-    print(copy_path_to)git
+    print(copy_path_to)
     tmp_copy_to = copy_path_to.copy()
     tmp_copy_to.append(name)
     vds_new = {
